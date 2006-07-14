@@ -10,9 +10,10 @@ if ($^O eq 'MSWin32') {
 plan tests => 6;
 
 # disable I18N::Langinfo for testing
-no warnings 'redefine';
+no warnings 'redefine', 'prototype';
 eval {
     require I18N::Langinfo;
+    local $SIG{__WARN__} = sub { };
     *I18N::Langinfo::langinfo = sub { undef };
 };
 
@@ -26,7 +27,7 @@ test_locale('ko_KR.euc', 'euc-kr');
 sub test_locale {
     my($locale, $expected) = @_;
 
-    local $ENV{LANG} = $locale;
+    local $ENV{LANGUAGE} = $locale;
     my $encoding = Term::Encoding::get_encoding();
     is $encoding, $expected;
 }
